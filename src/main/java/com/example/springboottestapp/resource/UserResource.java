@@ -3,6 +3,8 @@ package com.example.springboottestapp.resource;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,7 +45,7 @@ public class UserResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<User> createUser(@RequestBody User user){
+	public ResponseEntity<User> createUser(@Valid @RequestBody User user){
 		userService.createUser(user);
 		
 		URI location = ServletUriComponentsBuilder
@@ -58,8 +60,6 @@ public class UserResource {
 	@GetMapping("/{id}")
 	public User getUser(@PathVariable Integer id) {
 		User user = userService.getUser(id);
-		
-		System.out.println(user.getBirthDate());
 		
 		if (user == null) {
 			throw new RestResourceNotFoundException("User of id " + id + " not found!");

@@ -2,6 +2,9 @@ package com.example.springboottestapp.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -12,12 +15,14 @@ public class User {
 	private Integer id;
 
 	@JsonProperty
+	@Size(min = 2, message = "Name should have at least 2 characters!")
 	private String name;
 
 	@JsonProperty
 	private String surname;
 
 	@JsonProperty
+	@Past(message = "Birth date must be in the past!")
 	private Date birthDate;
 
 	public User() {
