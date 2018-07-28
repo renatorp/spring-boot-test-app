@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,14 @@ public class PostService {
 	}
 
 	public Post getPost(Integer id) {
-		return postsByUser.values().stream().flatMap(v -> v.stream()).filter(p -> p.getId() == id).findFirst().get();
+		Optional<Post> firstResult = postsByUser.values().stream().flatMap(v -> v.stream()).filter(p -> p.getId() == id)
+				.findFirst();
+
+		if (!firstResult.isPresent()) {
+			return null;
+		}
+
+		return firstResult.get();
 	}
 
 }

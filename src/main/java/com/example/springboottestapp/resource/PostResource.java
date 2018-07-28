@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.springboottestapp.exception.RestResourceNotFoundException;
+import com.example.springboottestapp.handler.MessageSourceHandler;
 import com.example.springboottestapp.model.Post;
 import com.example.springboottestapp.service.PostService;
 
@@ -17,12 +18,15 @@ public class PostResource {
 	@Autowired
 	private PostService postService;
 
+	@Autowired
+	private MessageSourceHandler messageSourceHandler;
+
 	@GetMapping("/{id}")
 	public Post getPost(@PathVariable Integer id) {
 		Post post = postService.getPost(id);
 
 		if (post == null) {
-			throw new RestResourceNotFoundException("Post of id " + id + " not found!");
+			throw new RestResourceNotFoundException(messageSourceHandler.getMessage("message.error.notfound.post", id));
 		}
 
 		return post;

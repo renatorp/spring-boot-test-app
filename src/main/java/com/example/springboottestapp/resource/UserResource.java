@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.springboottestapp.exception.RestResourceNotFoundException;
+import com.example.springboottestapp.handler.MessageSourceHandler;
 import com.example.springboottestapp.model.Post;
 import com.example.springboottestapp.model.User;
 import com.example.springboottestapp.service.PostService;
@@ -32,6 +33,9 @@ public class UserResource {
 	@Autowired
 	private PostService postService;
 
+	@Autowired
+	private MessageSourceHandler messageHandler;
+
 	@GetMapping
 	public List<User> findUsers() {
 		return userService.findUsers();
@@ -42,7 +46,7 @@ public class UserResource {
 		User removedUser = userService.deleteUser(id);
 
 		if (removedUser == null) {
-			throw new RestResourceNotFoundException("User of id " + id + " not found!");
+			throw new RestResourceNotFoundException(messageHandler.getMessage("message.error.notfound.user", id));
 		}
 
 		return ResponseEntity.ok().build();
@@ -64,7 +68,7 @@ public class UserResource {
 		User user = userService.getUser(id);
 
 		if (user == null) {
-			throw new RestResourceNotFoundException("User of id " + id + " not found!");
+			throw new RestResourceNotFoundException(messageHandler.getMessage("message.error.notfound.user", id));
 		}
 
 		return user;

@@ -2,6 +2,9 @@ package com.example.springboottestapp.exception;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +16,23 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.example.springboottestapp.handler.MessageSourceHandler;
 import com.example.springboottestapp.response.ExceptionResponse;
 
 @ControllerAdvice
 @RestController
 public class ApplicationResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Autowired
+	private MessageSourceHandler messageSourceHandler;
+
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<Object> handleGenericExceptions(Exception ex, WebRequest request) {
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(new ExceptionResponse(new Date(), "A generic error ocurred!!", request.getDescription(false)));
+		logger.error("ERROR", ex);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionResponse(new Date(),
+				messageSourceHandler.getMessage("message.error.generic"), request.getDescription(false)));
 	}
 
 	@ExceptionHandler(RestResourceNotFoundException.class)
@@ -35,7 +45,7 @@ public class ApplicationResponseEntityExceptionHandler extends ResponseEntityExc
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(new Date(),
-				"Validation Failed!", createValidationErrorMessage(ex)));
+				messageSourceHandler.getMessage("message.error.validation"), createValidationErrorMessage(ex)));
 	}
 
 	private String createValidationErrorMessage(MethodArgumentNotValidException ex) {

@@ -16,14 +16,14 @@ public class User {
 	private Integer id;
 
 	@JsonProperty
-	@Size(min = 2, message = "Name should have at least 2 characters!")
+	@Size(min = 2, message = "{message.validation.user.name.min}")
 	private String name;
 
 	@JsonProperty
 	private String surname;
 
 	@JsonProperty
-	@Past(message = "Birth date must be in the past!")
+	@Past(message = "{message.validation.user.birthdate.past}")
 	private Date birthDate;
 
 	private List<Post> posts;
