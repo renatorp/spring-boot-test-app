@@ -3,16 +3,24 @@ package com.example.springboottestapp.model;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize
+@Entity
 public class User {
 
 	@JsonProperty
+	@Id
+	@GeneratedValue
 	private Integer id;
 
 	@JsonProperty
@@ -26,6 +34,8 @@ public class User {
 	@Past(message = "{message.validation.user.birthdate.past}")
 	private Date birthDate;
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "user")
 	private List<Post> posts;
 
 	public User() {

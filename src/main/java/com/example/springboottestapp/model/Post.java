@@ -1,17 +1,33 @@
 package com.example.springboottestapp.model;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize
+@Entity
 public class Post {
 
+	@Id
+	@GeneratedValue
 	private Integer id;
+
+	@Lob
 	private String description;
-	
+
 	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
-	
+
+	public Post() {
+	}
+
 	public Post(Integer id, String description) {
 		super();
 		this.id = id;

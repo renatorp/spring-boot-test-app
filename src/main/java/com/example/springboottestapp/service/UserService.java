@@ -1,50 +1,56 @@
 package com.example.springboottestapp.service;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.springboottestapp.dao.PostDAO;
+import com.example.springboottestapp.dao.UserDAO;
 import com.example.springboottestapp.model.User;
 
 @Service
 public class UserService {
 
-	private int idSeq = 0;
+	@Autowired
+	private UserDAO userDAO;
 
-	private Map<Integer, User> users = new HashMap<>();
-
-	{
-		users.put(++idSeq, new User(1, "Haf", "Thorleifsson",
-				Date.from(LocalDate.of(1980, 11, 3).atStartOfDay(ZoneId.systemDefault()).toInstant())));
-
-		users.put(++idSeq, new User(2, "Hreitharr", "Gautisson",
-				Date.from(LocalDate.of(1970, 7, 7).atStartOfDay(ZoneId.systemDefault()).toInstant())));
-
-		users.put(++idSeq, new User(3, "Hallgerd", "Iogæirdottir",
-				Date.from(LocalDate.of(1940, 1, 24).atStartOfDay(ZoneId.systemDefault()).toInstant())));
-	}
+	@Autowired
+	private PostDAO postDAO;
 
 	public User createUser(User user) {
-		user.setId(++idSeq);
-		users.put(user.getId(), user);
-		return user;
+		return userDAO.save(user);
 	}
 
 	public List<User> findUsers() {
-		return new ArrayList<>(users.values());
+		return userDAO.findAll();
 	}
 
 	public User getUser(Integer id) {
-		return users.get(id);
+		Optional<User> user = userDAO.findById(id);
+
+		if (user.isPresent()) {
+			return user.get();
+		}
+		return null;
 	}
 
 	public User deleteUser(Integer id) {
-		return users.remove(id);
+
+		User user = getUser(id);
+
+		if (user != null) {
+
+			// jpa 2.1 now allowing criteria delete with joins
+			// avoid this in code to be released to production.
+			postDAO.findAllByUserId(id).forEach(postDAO::delete);
+
+			userDAO.delete(user);
+
+			return user;
+		}
+
+		return null;
 	}
 }
